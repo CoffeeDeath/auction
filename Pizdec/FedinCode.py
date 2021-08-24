@@ -1,5 +1,6 @@
 # import sys
 from random import randint
+import pandas as pd
 
 
 class Auction():
@@ -42,45 +43,50 @@ class Auction():
         return lst
 
     def start_of_sales(self):
-        df_sell = pd.read_csv('dfsell.csv', sep = '\t')
-        df_buy = pd.read_csv('dfbuy.csv', sep = '\t')
+        # print('-----------------')
+        df_sell = pd.read_csv('dfsell.csv', sep='\t')
+        df_buy = pd.read_csv('dfbuy.csv', sep='\t')
         self.sell = df_sell.astype(float).values.tolist()
         self.buy = df_buy.astype(float).values.tolist()
-        # print('-----------------')
+
         if self.buy[-1][1] > self.sell[-1][1]:
+            try:
             # print(1)
-            if len(self.buy) == 1:
-                print(int(self.buy[-1][3]), 'купил', self.sell[-1][1], 'Квт у', int(self.sell[-1][3]), 'за',
-                      max(self.buy[-2][0], self.sell[-1][0]), 'руб/Квт')
-            else:
-                print(int(self.buy[-1][3]), 'купил', self.sell[-1][1], 'Квт у', int(self.sell[-1][3]), 'за',
-                      max(self.buy[-1][0], self.sell[-1][0]), 'руб/Квт')
+                if len(self.buy) == 1:
+                    print(int(self.buy[-1][3]), 'купил', self.sell[-1][1], 'Квт у', int(self.sell[-1][3]), 'за',
+                          max(self.buy[-2][0], self.sell[-1][0]), 'руб')
+                else:
+                    print(int(self.buy[-1][3]), 'купил', self.sell[-1][1], 'Квт у', int(self.sell[-1][3]), 'за',
+                          max(self.buy[-1][0], self.sell[-1][0]), 'руб')
+            except IndexError:
+                print('error', 'IndexError', 'in FedinCode')
             self.buy[-1][1] -= self.sell[-1][1]
             self.sell = self.DelElement(self.sell, self.sell[-1])
         elif self.buy[-1][1] == self.sell[-1][1]:
             # print(2)
             if len(self.buy) == 1:
                 print(int(self.buy[-1][3]), 'купил', self.sell[-1][1], 'Квт у', int(self.sell[-1][3]),
-                      'за', self.buy[-1][0], 'руб/Квт')
+                      'за', self.buy[-1][0], 'руб')
             else:
                 print(int(self.buy[-1][3]), 'купил', self.sell[-1][1], 'Квт у', int(self.sell[-1][3]), 'за',
-                      max(self.buy[-2][0], self.sell[-1][0]), 'руб/Квт')
+                      max(self.buy[-2][0], self.sell[-1][0]), 'руб')
             self.sell = self.DelElement(self.sell, self.sell[-1])
             self.buy = self.DelElement(self.buy, self.buy[-1])
         else:
             # print(3)
             if len(self.buy) == 1:
                 print(int(self.buy[-1][3]), 'купил', self.buy[-1][1], 'Квт у', int(self.sell[-1][3]),
-                      'за', self.buy[-1][0], 'руб/Квт')
+                      'за', self.buy[-1][0], 'руб')
             else:
                 print(int(self.buy[-1][3]), 'купил', self.buy[-1][1], 'Квт у', int(self.sell[-1][3]), 'за',
-                      max(self.buy[-2][0], self.sell[-1][0]), 'руб/Квт')
+                      max(self.buy[-2][0], self.sell[-1][0]), 'руб')
             self.sell[-1][1] -= self.buy[-1][1]
             self.buy = self.DelElement(self.buy, self.buy[-1])
             self.recomend_buy, self.recomend_sell = self.buy, self.sell
+            # self.sell
         df_sell = pd.DataFrame(self.sell, index=[i for i in range(len(self.sell))])
         df_buy = pd.DataFrame(self.buy, index=[i for i in range(len(self.buy))])
-        df_sell.to_csv('dfsell.csv', sep = '\t')
+        df_sell.to_csv('dfsell.csv', sep='\t')
         df_buy.to_csv('dfbuy.csv', sep='\t')
         return [self.buy, self.sell]
 
@@ -103,13 +109,14 @@ class Auction():
                     for elem in self.allbuy:
                         self.result.append((elem, (self.recomend_sell[-1][0] + pop[0] / 2)))
             elif self.recomend_buy[-1][1] == self.recomend_sell[-1][1]:
-                self.result.append((self.recomend_sell[-1][3], self.recomend_buy[-1][3], (self.recomend_sell[-1][0] + self.recomend_buy[-1][0]) / 2))
-                # self.result.append((self.recomend_sell[-1][3], (self.recomend_sell[-1][0] + self.recomend_buy[-1][0]) / 2))
+                self.result.append((self.recomend_buy[-1][3], (self.recomend_sell[-1][0] + self.recomend_buy[-1][0]) / 2))
+                self.result.append((self.recomend_sell[-1][3], (self.recomend_sell[-1][0] + self.recomend_buy[-1][0]) / 2))
                 self.recomend_buy = self.DelElement(self.recomend_buy, self.recomend_buy[-1])
                 self.recomend_sell = self.DelElement(self.recomend_sell, self.recomend_sell[-1])
+            print(self.result)
             return self.result
         except IndexError:
-            return [['error', 'Index erroe', 'in FedinCode']]
+            return [['error', 'IndexError', 'in FedinCode']]
 
 
 
