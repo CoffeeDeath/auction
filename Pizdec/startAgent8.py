@@ -1,12 +1,12 @@
 import random
-
+import threading
 from Agent import Agent
 import numpy as np
 from random import uniform, randint
 from time import time, ctime, sleep
 from startMain import query
 
-URL = 'http://127.0.0.1:5000/'
+URL = 'http://193.32.219.22:5000/'
 # id_ = randint(100_000, 999_999)
 id_ = '888888'
 d = 51

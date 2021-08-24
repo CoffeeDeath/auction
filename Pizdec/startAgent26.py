@@ -1,12 +1,12 @@
 import random
-
+import threading
 from Agent import Agent
 import numpy as np
 from random import uniform, randint
 from time import time, ctime, sleep
 from startMain import query
 
-URL = 'http://127.0.0.1:5000/'
+URL = 'http://193.32.219.22:5000/'
 # id_ = randint(100_000, 999_999)
 id_ = '666666'
 d = 51
@@ -14,7 +14,7 @@ y_values = np.array([uniform(-1, 1) for i in range(d)], dtype=float)
 x_values = np.array([i for i in range(d)], dtype=float)
 d1 = 51
 # y_values1 = np.array([uniform(0, 7) for i in range(d)], dtype=float)
-values = query(id_)
+values = query('666666')
 
 # рандом значений
 
