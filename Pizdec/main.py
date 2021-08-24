@@ -14,11 +14,18 @@ import os
 auction = Auction()
 dict_dunch_auction = {}
 list_id_dutch = []
-
+try:
+    df_sell = pd.DataFrame({})
+    df_buy = pd.DataFrame({})
+    df_sell.to_csv('dfsell.csv', sep='\t')
+    df_buy.to_csv('dfbuy.csv', sep='\t')
+except:
+    print('(((')
 app = Flask(__name__)
-df_sell = pd.DataFrame(columns = ['id', 'bet', 'time', 'lot'])
+df_sell = pd.DataFrame(columns=['bet', 'lot', 'time', 'id'])
 # df_sell = pd.DataFrame({'id':0, 'bet':0, 'time':0, 'lot':0})
-df_buy = pd.DataFrame(columns = ['id', 'bet', 'time', 'lot'])
+df_buy = pd.DataFrame(columns=['bet', 'lot', 'time', 'id'])
+
 # df_buy = pd.DataFrame({'id':0, 'bet':0, 'time':0, 'lot':0})
 # args = {"args": [
 #     "run",
@@ -36,10 +43,13 @@ df_buy = pd.DataFrame(columns = ['id', 'bet', 'time', 'lot'])
 
 def df_add_bets_sell(id_, bet, times, lot):
     df_sell.loc[str(df_sell.shape[0] + 1)] = [bet, lot, int(times), id_]
+    df_sell.to_csv('dfsell.csv', sep='\t')
+
 
 
 def df_add_bets_buy(id_, bet, times, lot):
     df_buy.loc[str(df_sell.shape[0] + 1)] = [bet, lot, int(times), id_]
+    df_buy.to_csv('dfbuy.csv', sep='\t')
 # def add_bets_sell(id_, bet, times, lot):
 #     cursor_sell.execute("INSERT INTO sell (id, bet, time, lot) VALUES  ('%d', '%f', '%f', '%f')" % (id_, bet, times, lot))
 #     con_sell.commit()
@@ -62,7 +72,6 @@ def df_add_bets_buy(id_, bet, times, lot):
 def new_lot_sell(id_, cost, v):
     times = time.time()
     if request.method == "POST":
-        # times = time.time()
         df_add_bets_sell(id_=id_, bet=cost, times=float(times), lot=v)
         return 'ok'
     else:
@@ -97,6 +106,7 @@ async def start_auction():
         while True:
             try:
                 print('---------')
+                #print(df_sell[:], df_buy[:], sep='\n')
                 second = 60
                 await asyncio.sleep(second)
                 # sell, buy = [], []
@@ -126,8 +136,8 @@ async def start_auction():
         traceback.print_exc()
         print('bruh')
     finally:
-        print(df_sell[:])
-        print(df_buy[:])
+        # print(df_sell[:])
+        # print(df_buy[:])dfsell
         # try:
         #     # df_sell.drop(axis=0, inplace=True)
         #     # df_buy.drop(axis=0, inplace=True)
@@ -135,6 +145,7 @@ async def start_auction():
         #     print("bruuuh")
         # finally:
         #     print("не вошло")
+        pass
     t1 = threading.Timer(second, start_auction)
     t1.start()
 
@@ -146,6 +157,8 @@ def exit_handler():
         # t1.join()
         # t2.join()
         # t3.join()
+        df_sell.drop(axis=0, inplace=True)
+        df_buy.drop(axis=0, inplace=True)
         t4.join()
     except NameError:
         pass
@@ -220,24 +233,23 @@ def exit():
     atexit.register(exit_handler)
 
 print('2222')
-t4 = threading.Thread(target=exit(), args=())
-t1 = threading.Thread(target=os.system, args=('python запускай_отсюда.py',))
-t2 = threading.Thread(target=os.system, args=('python startAgent2.py',))
-t8 = threading.Thread(target=os.system, args=('python startAgent3.py',))
-t9 = threading.Thread(target=os.system, args=('python startAgent4.py',))
-t10 = threading.Thread(target=os.system, args=('python startAgent5.py',))
-t11 = threading.Thread(target=os.system, args=('python startAgent26.py',))
-t12 = threading.Thread(target=os.system, args=('python startAgent27.py',))
-t13 = threading.Thread(target=os.system, args=('python startAgent8.py',))
-t1.start()
-t2.start()
-t8.start()
-t9.start()
-t10.start()
-t11.start()
-t12.start()
-t13.start()
-# print('123456')
+# t4 = threading.Thread(target=exit(), args=())
+# t1 = threading.Thread(target=os.system, args=('python запускай_отсюда.py',))
+# t2 = threading.Thread(target=os.system, args=('python startAgent2.py',))
+# t8 = threading.Thread(target=os.system, args=('python startAgent3.py',))
+# t9 = threading.Thread(target=os.system, args=('python startAgent4.py',))
+# t10 = threading.Thread(target=os.system, args=('python startAgent5.py',))
+# t11 = threading.Thread(target=os.system, args=('python startAgent26.py',))
+# t12 = threading.Thread(target=os.system, args=('python startAgent27.py',))
+# t13 = threading.Thread(target=os.system, args=('python startAgent8.py',))
+# t1.start()
+# t2.start()
+# t8.start()
+# t9.start()
+# t10.start()
+# t11.start()
+# t12.start()
+# t13.start()
 # t2 = threading.Thread(target=start_server(), args=())
 print('11111')
 asyncio.run(start_auction())
